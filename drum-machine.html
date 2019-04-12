@@ -25,6 +25,7 @@
     <title>COMP4431 Multimedia Computing - Lab 1 MIDI Keyboard</title>
 
     <style>
+      body { background-color: #444; color: white; }
       .controls { float: left; margin: 0 20px 20px 0; }
       .keyboard { float: left; position: relative; margin-top: 40px; width: 562px; height: 252px; border: 1px solid black; background: black; }
       .white-keys, .black-keys { position: absolute; }
@@ -32,107 +33,188 @@
       .white-key { width: 40px; height: 250px; background: white; }
       .black-key { margin: 0 5px; width: 30px; height: 160px; background: black; }
       .spacer { width: 20px; float: left; }
+
+      .track { padding-left: 2.5%; width: 95%; }
+      .track-name { text-align: right; }
+      .beats-panel { text-align: left; overflow-x: auto; }
+      .beat-btn { height: 30px; width: 30px; border: 1px solid black; border-radius: 5px; background-color: #222; cursor: pointer; }
+      .slider { border-radius: 6px; width: 44%; min-width: 60px; margin:0 2% 0 2%; -webkit-appearance: none; background-color: #222; overflow: hidden; }
+      .slider::-webkit-slider-runnable-track { height: 12px; -webkit-appearance: none; color: rgb(53,202,197); margin-top: -1px; }
+      .slider::-webkit-slider-thumb { width: 12px; -webkit-appearance: none; height: 12px; cursor: pointer; background: #434343; box-shadow: -50px 0 0 44px rgb(53,202,197); border-radius: 6px; }
     </style>
   </head>
   <body>
-    <div class="p-3">
-      <h3>COMP4431 MIDI Keyboard</h3>
-
-      <p>
-        You may need to wait a couple of seconds for the sound to load.<br>
-        This page uses a trumpet to play the notes.
-      </p>
-
-      <form>
-        <div class="controls">
-          <h4>Controls</h4>
-          <label for="amplitude">MIDI amplitude (0-127):</label>
-          <br>
-          <input type="range" id="amplitude" min="0" max="127" value="100">
-          <br>
-          <label for="amplitude">MIDI pitch (21-85):</label>
-          <br>
-          <input type="range" id="pitch" min="21" max="85" value="21">
-          <br>
-          <label for="chord">Chord Mode:</label>
-          <br>
-          <label>
-            <input type="radio" name="play-mode" value="single" checked=""> Single note
-          </label>
-          <br>
-          <label>
-            <input type="radio" name="play-mode" value="major"> Major chord
-          </label>
-          <br>
-          <label>
-            <input type="radio" name="play-mode" value="minor"> Minor chord
-          </label>
-          <br>
-          <label for="program">Instrument:</label>
-          <select id="program">
-            <option value="24">Nylon Acoustic Guitar</option>
-            <option value="0">Acoustic Grand Piano</option>
-            <option value="40">Violin</option>
-            <option value="73">Flute</option>
-            <option value="42">Cello</option>
-            <option value="57">Trombone</option>
-            <option value="60">French Horn</option>
-            <option value="72">Piccolo</option>
-            <option value="68">Oboe</option>
-            <option value="22">Harmonica</option>
-          </select>
+    <div class="p-3 container">
+      <h3>COMP4431 MIDI Keyboard <span style="font-size: 12px">& Drum Machine</span></h3>
+      <div>
+        <div class="alert alert-primary" role="alert">
+          <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+          You may need to wait a couple of seconds for the sound to load.<br>
+          This page uses a trumpet to play the notes.
         </div>
+      </div>
+      <form>
+        <ul class="nav nav-tabs" role="tablist">
+          <li class="nav-item">
+            <a class="nav-link" id="midi-keyboard-tab" data-toggle="tab" href="#midi-keyboard" role="tab" aria-controls="midi-keyboard" aria-selected="true">MIDI Keyboard</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link active" id="drum-machine-tab" data-toggle="tab" href="#drum-machine" role="tab" aria-controls="drum-machine" aria-selected="false">Drum Machine</a>
+          </li>
+        </ul>
+        <div class="tab-content">
+          <div class="tab-pane fade show" id="midi-keyboard" role="tabpanel" aria-labelledby="midi-keyboard-tab">
+            <div class="controls">
+              <h4>Controls</h4>
+              <label for="amplitude">MIDI amplitude (0-127):</label>
+              <br>
+              <input type="range" id="amplitude" min="0" max="127" value="100">
+              <br>
+              <label for="amplitude">MIDI pitch (21-85):</label>
+              <br>
+              <input type="range" id="pitch" min="21" max="85" value="21">
+              <br>
+              <label for="chord">Chord Mode:</label>
+              <br>
+              <label>
+                <input type="radio" name="play-mode" value="single" checked=""> Single note
+              </label>
+              <br>
+              <label>
+                <input type="radio" name="play-mode" value="major"> Major chord
+              </label>
+              <br>
+              <label>
+                <input type="radio" name="play-mode" value="minor"> Minor chord
+              </label>
+              <br>
+              <label for="program">Instrument:</label>
+              <select id="program">
+                <option value="24">Nylon Acoustic Guitar</option>
+                <option value="0">Acoustic Grand Piano</option>
+                <option value="40">Violin</option>
+                <option value="73">Flute</option>
+                <option value="42">Cello</option>
+                <option value="57">Trombone</option>
+                <option value="60">French Horn</option>
+                <option value="72">Piccolo</option>
+                <option value="68">Oboe</option>
+                <option value="22">Harmonica</option>
+              </select>
+            </div>
 
-        <div class="keyboard">
-          <!-- First we draw the white keys -->
-          <div class="white-keys">
-            <button type="button" class="white-key" data-piano-key-number="0"></button>
-            <button type="button" class="white-key" data-piano-key-number="2"></button>
-            <button type="button" class="white-key" data-piano-key-number="4"></button>
-            <button type="button" class="white-key" data-piano-key-number="5"></button>
-            <button type="button" class="white-key" data-piano-key-number="7"></button>
-            <button type="button" class="white-key" data-piano-key-number="9"></button>
-            <button type="button" class="white-key" data-piano-key-number="11"></button>
-            <button type="button" class="white-key" data-piano-key-number="12"></button>
-            <button type="button" class="white-key" data-piano-key-number="14"></button>
-            <button type="button" class="white-key" data-piano-key-number="16"></button>
-            <button type="button" class="white-key" data-piano-key-number="17"></button>
-            <button type="button" class="white-key" data-piano-key-number="19"></button>
-            <button type="button" class="white-key" data-piano-key-number="21"></button>
-            <button type="button" class="white-key" data-piano-key-number="23"></button>
+            <div class="keyboard">
+              <!-- First we draw the white keys -->
+              <div class="white-keys">
+                <button type="button" class="piano-key white-key" data-piano-key-number="0"></button>
+                <button type="button" class="piano-key white-key" data-piano-key-number="2"></button>
+                <button type="button" class="piano-key white-key" data-piano-key-number="4"></button>
+                <button type="button" class="piano-key white-key" data-piano-key-number="5"></button>
+                <button type="button" class="piano-key white-key" data-piano-key-number="7"></button>
+                <button type="button" class="piano-key white-key" data-piano-key-number="9"></button>
+                <button type="button" class="piano-key white-key" data-piano-key-number="11"></button>
+                <button type="button" class="piano-key white-key" data-piano-key-number="12"></button>
+                <button type="button" class="piano-key white-key" data-piano-key-number="14"></button>
+                <button type="button" class="piano-key white-key" data-piano-key-number="16"></button>
+                <button type="button" class="piano-key white-key" data-piano-key-number="17"></button>
+                <button type="button" class="piano-key white-key" data-piano-key-number="19"></button>
+                <button type="button" class="piano-key white-key" data-piano-key-number="21"></button>
+                <button type="button" class="piano-key white-key" data-piano-key-number="23"></button>
+              </div>
+
+              <!-- Now we draw the black keys, so they appear on top of the white keys
+              (in a web page, things included later are normally shown on top of things included earlier) -->
+              <div class="black-keys">
+                <div class="spacer">&nbsp;</div>
+                <button type="button" class="piano-key black-key" data-piano-key-number="1"></button>
+                <button type="button" class="piano-key black-key" data-piano-key-number="3"></button>
+                <div class="spacer">&nbsp;</div>
+                <div class="spacer">&nbsp;</div>
+                <button type="button" class="piano-key black-key" data-piano-key-number="6"></button>
+                <button type="button" class="piano-key black-key" data-piano-key-number="8"></button>
+                <button type="button" class="piano-key black-key" data-piano-key-number="10"></button>
+                <div class="spacer">&nbsp;</div>
+                <div class="spacer">&nbsp;</div>
+                <button type="button" class="piano-key black-key" data-piano-key-number="13"></button>
+                <button type="button" class="piano-key black-key" data-piano-key-number="15"></button>
+                <div class="spacer">&nbsp;</div>
+                <div class="spacer">&nbsp;</div>
+                <button type="button" class="piano-key black-key" data-piano-key-number="18"></button>
+                <button type="button" class="piano-key black-key" data-piano-key-number="20"></button>
+                <button type="button" class="piano-key black-key" data-piano-key-number="22"></button>
+              </div>
+            </div>
           </div>
+          <div class="tab-pane fade show active" id="drum-machine" role="tabpanel" aria-labelledby="drum-machine-tab">
+            <br/><br/>
+            
+            <div class="track">
+              <div class="row">
+                <div class="track-name col-2">Example 1</div>
+                <div class="beats-panel col-8">
+                  <button class="beat-btn" type="button"></button>
+                  <button class="beat-btn" type="button"></button>
+                  <button class="beat-btn" type="button"></button>
+                  <button class="beat-btn" type="button"></button>
+                  <button class="beat-btn" type="button"></button>
+                  <button class="beat-btn" type="button"></button>
+                  <button class="beat-btn" type="button"></button>
+                  <button class="beat-btn" type="button"></button>
+                </div>
+                <div class="col-2">
+                  <input class="slider" type="range" min="0" max="100" value="100" />
+                  <input class="slider" type="range" min="0" max="100" value="50" />
+                </div>
+              </div>
+            </div>
 
-          <!-- Now we draw the black keys, so they appear on top of the white keys
-          (in a web page, things included later are normally shown on top of things included earlier) -->
-          <div class="black-keys">
-            <div class="spacer">&nbsp;</div>
-            <button type="button" class="black-key" data-piano-key-number="1"></button>
-            <button type="button" class="black-key" data-piano-key-number="3"></button>
-            <div class="spacer">&nbsp;</div>
-            <div class="spacer">&nbsp;</div>
-            <button type="button" class="black-key" data-piano-key-number="6"></button>
-            <button type="button" class="black-key" data-piano-key-number="8"></button>
-            <button type="button" class="black-key" data-piano-key-number="10"></button>
-            <div class="spacer">&nbsp;</div>
-            <div class="spacer">&nbsp;</div>
-            <button type="button" class="black-key" data-piano-key-number="13"></button>
-            <button type="button" class="black-key" data-piano-key-number="15"></button>
-            <div class="spacer">&nbsp;</div>
-            <div class="spacer">&nbsp;</div>
-            <button type="button" class="black-key" data-piano-key-number="18"></button>
-            <button type="button" class="black-key" data-piano-key-number="20"></button>
-            <button type="button" class="black-key" data-piano-key-number="22"></button>
+            <div class="track">
+              <div class="row">
+                <div class="track-name col-2">Example 2</div>
+                <div class="beats-panel col-8">
+                  <button class="beat-btn" type="button"></button>
+                  <button class="beat-btn" type="button"></button>
+                  <button class="beat-btn" type="button"></button>
+                  <button class="beat-btn" type="button"></button>
+                  <button class="beat-btn" type="button"></button>
+                  <button class="beat-btn" type="button"></button>
+                  <button class="beat-btn" type="button"></button>
+                  <button class="beat-btn" type="button"></button>
+                </div>
+                <div class="col-2">
+                  <input class="slider" type="range" min="0" max="100" value="100" />
+                  <input class="slider" type="range" min="0" max="100" value="50" />
+                </div>
+              </div>
+            </div>
+           
           </div>
         </div>
       </form>
-
     </div>
 
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js" integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k" crossorigin="anonymous"></script>
 
-    <!-- the lab JavaScript -->
-	<script src="lab01.js" type="text/javascript"></script>
+    <!-- the lab JavaScript --> 
+    <script src="lab01.js" type="text/javascript"></script>
+
+    <!-- Listener stuffs -->
+    <script>
+      $(".beat-btn").click(function() {
+        console.log(this.on);
+        if (this.on === undefined) this.on = true;
+        else this.on = !this.on;
+        if (this.on) {
+          $(this).css("background-color", "rgb(53,202,197)");
+        }
+        else {
+          $(this).css("background-color", "#222");
+        }
+      });
+    </script>
 
   </body>
 </html>

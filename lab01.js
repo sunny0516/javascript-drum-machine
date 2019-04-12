@@ -99,8 +99,8 @@ $(document).ready(function() {
             MIDI.programChange(0, parseInt($('#program').val()));  // Get the first value of instrument select
 
             // Set up the event handlers for all the buttons
-            $("button").on("mousedown", handlePianoKeyPress);
-            $("button").on("mouseup", handlePianoKeyRelease);
+            $(".piano-key").on("mousedown", handlePianoKeyPress);
+            $(".piano-key").on("mouseup", handlePianoKeyRelease);
 
             //
             // You probably need to set up an event for your instrument change
