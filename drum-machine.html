@@ -25,7 +25,7 @@
     <title>COMP4431 Multimedia Computing - Lab 1 MIDI Keyboard</title>
 
     <style>
-      body { background-color: #444; color: white; }
+      body { background-color: #444; color: #aaaaaa; }
       .controls { float: left; margin: 0 20px 20px 0; }
       .keyboard { float: left; position: relative; margin-top: 40px; width: 562px; height: 252px; border: 1px solid black; background: black; }
       .white-keys, .black-keys { position: absolute; }
@@ -34,13 +34,24 @@
       .black-key { margin: 0 5px; width: 30px; height: 160px; background: black; }
       .spacer { width: 20px; float: left; }
 
+      .option-panel { margin: 20px 0 20px 0; }
+      .prompt-row { font-size: 14px; }
+
       .track { padding-left: 2.5%; width: 95%; }
       .track-name { text-align: right; }
       .beats-panel { text-align: left; overflow-x: auto; }
       .beat-btn { height: 30px; width: 30px; border: 1px solid black; border-radius: 5px; background-color: #222; cursor: pointer; }
-      .slider { border-radius: 6px; width: 44%; min-width: 60px; margin:0 2% 0 2%; -webkit-appearance: none; background-color: #222; overflow: hidden; }
+      .beat-btn:hover { border: 1px solid #888; }
+      .slider { border-radius: 6px; width: 90%; min-width: 60px; -webkit-appearance: none; background-color: #222; overflow: hidden; }
+      .slider-master { border-radius: 7px; width: 80%; min-width: 200px; margin: 0 10px 0 10px; -webkit-appearance: none; background-color: #222; overflow: hidden; }
       .slider::-webkit-slider-runnable-track { height: 12px; -webkit-appearance: none; color: rgb(53,202,197); margin-top: -1px; }
-      .slider::-webkit-slider-thumb { width: 12px; -webkit-appearance: none; height: 12px; cursor: pointer; background: #434343; box-shadow: -50px 0 0 44px rgb(53,202,197); border-radius: 6px; }
+      .slider::-webkit-slider-thumb { width: 12px; -webkit-appearance: none; height: 12px; cursor: pointer; background: #555; box-shadow: -500px 0 0 494px rgb(53,202,197); border-radius: 6px; cursor:pointer; }
+      .slider-master::-webkit-slider-runnable-track { height: 14px; -webkit-appearance: none; color: rgb(53,202,197); }
+      .slider-master::-webkit-slider-thumb { width: 14px; -webkit-appearance: none; height: 14px; cursor: pointer; background: #555; box-shadow: -500px 0 0 493px rgb(53,202,197); border-radius: 7px; cursor:pointer; }
+
+      .number-input { margin: 0 10px 0 10px; padding: 5px; width: 60px; height: 30px; border: 1px solid black; border-radius: 5px; background-color: #222; color: #aaaaaa; }
+
+      .unselectable { -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none; }
     </style>
   </head>
   <body>
@@ -147,45 +158,69 @@
               </div>
             </div>
           </div>
+
+          <!-- Drum machine -->
           <div class="tab-pane fade show active" id="drum-machine" role="tabpanel" aria-labelledby="drum-machine-tab">
-            <br/><br/>
-            
-            <div class="track">
+
+            <div class="option-panel unselectable">
               <div class="row">
-                <div class="track-name col-2">Example 1</div>
-                <div class="beats-panel col-8">
-                  <button class="beat-btn" type="button"></button>
-                  <button class="beat-btn" type="button"></button>
-                  <button class="beat-btn" type="button"></button>
-                  <button class="beat-btn" type="button"></button>
-                  <button class="beat-btn" type="button"></button>
-                  <button class="beat-btn" type="button"></button>
-                  <button class="beat-btn" type="button"></button>
-                  <button class="beat-btn" type="button"></button>
-                </div>
-                <div class="col-2">
-                  <input class="slider" type="range" min="0" max="100" value="100" />
-                  <input class="slider" type="range" min="0" max="100" value="50" />
+                <div class="col-4">
+                  <div class="unselectable">Master Volume</div>
+                  <input id="master-volume" class="slider slider-master" type="range" min="0" max="100" value="100" />
                 </div>
               </div>
+              <div class="row">
+                <div class="col-2">
+                  <div class="unselectable">Tempo</div>
+                  <input class="number-input" type="number" name="quantity" min="40" max="200" value="80" />
+                </div>
+              </div>              
             </div>
+            
+            <div class="track unselectable">
+              <div class="row prompt-row">
+                <div class="track-name col-2">Tracks</div>
+                <div class="col-7" style="text-align: justify;"><div style="width: 100%;">bars</div></div>
+                <div class="col-1">volume</div>
+                <div class="col-1">pitch</div>
+              </div>
+              <div class="row">
+                <div class="track-name col-2">Example 1</div>
+                <div class="beats-panel col-7">
+                  <button class="beat-btn" type="button" track="1" code="0"></button>
+                  <button class="beat-btn" type="button" track="1" code="1"></button>
+                  <button class="beat-btn" type="button" track="1" code="2"></button>
+                  <button class="beat-btn" type="button" track="1" code="3"></button>
+                  <button class="beat-btn" type="button" track="1" code="4"></button>
+                  <button class="beat-btn" type="button" track="1" code="5"></button>
+                  <button class="beat-btn" type="button" track="1" code="6"></button>
+                  <button class="beat-btn" type="button" track="1" code="7"></button>
+                </div>
+                <div class="col-1">
+                  <input id="track-1-volume" class="slider" type="range" min="0" max="100" value="100" />
+                </div>
+                <div class="col-1">
+                  <input id="track-1-pitch" class="slider" type="range" min="0" max="100" value="50" />
+                </div>
+              </div>
 
-            <div class="track">
               <div class="row">
                 <div class="track-name col-2">Example 2</div>
-                <div class="beats-panel col-8">
-                  <button class="beat-btn" type="button"></button>
-                  <button class="beat-btn" type="button"></button>
-                  <button class="beat-btn" type="button"></button>
-                  <button class="beat-btn" type="button"></button>
-                  <button class="beat-btn" type="button"></button>
-                  <button class="beat-btn" type="button"></button>
-                  <button class="beat-btn" type="button"></button>
-                  <button class="beat-btn" type="button"></button>
+                <div class="beats-panel col-7">
+                  <button class="beat-btn" type="button" track="2" code="0"></button>
+                  <button class="beat-btn" type="button" track="2" code="1"></button>
+                  <button class="beat-btn" type="button" track="2" code="2"></button>
+                  <button class="beat-btn" type="button" track="2" code="3"></button>
+                  <button class="beat-btn" type="button" track="2" code="4"></button>
+                  <button class="beat-btn" type="button" track="2" code="5"></button>
+                  <button class="beat-btn" type="button" track="2" code="6"></button>
+                  <button class="beat-btn" type="button" track="2" code="7"></button>
                 </div>
-                <div class="col-2">
-                  <input class="slider" type="range" min="0" max="100" value="100" />
-                  <input class="slider" type="range" min="0" max="100" value="50" />
+                <div class="col-1">
+                  <input id="track-2-volume" class="slider" type="range" min="0" max="100" value="100" />
+                </div>
+                <div class="col-1">                  
+                  <input id="track-2-pitch" class="slider" type="range" min="0" max="100" value="50" />
                 </div>
               </div>
             </div>
@@ -199,22 +234,6 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js" integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k" crossorigin="anonymous"></script>
 
     <!-- the lab JavaScript --> 
-    <script src="lab01.js" type="text/javascript"></script>
-
-    <!-- Listener stuffs -->
-    <script>
-      $(".beat-btn").click(function() {
-        console.log(this.on);
-        if (this.on === undefined) this.on = true;
-        else this.on = !this.on;
-        if (this.on) {
-          $(this).css("background-color", "rgb(53,202,197)");
-        }
-        else {
-          $(this).css("background-color", "#222");
-        }
-      });
-    </script>
-
+    <script src="midi-keyboard.js" type="text/javascript"></script>
   </body>
 </html>
