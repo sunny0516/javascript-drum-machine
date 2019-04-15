@@ -1,0 +1,154 @@
+body {
+    background-color: #444;
+    color: #aaaaaa;
+}
+
+.controls {
+    float: left;
+    margin: 0 20px 20px 0;
+}
+
+.keyboard {
+    float: left;
+    position: relative;
+    margin-top: 40px;
+    width: 562px;
+    height: 252px;
+    border: 1px solid black;
+    background: black;
+}
+
+.white-keys, .black-keys {
+    position: absolute;
+}
+
+.white-key, .black-key {
+    float: left;
+    border: 1px solid black;
+    border-radius: 4px;
+}
+
+.white-key {
+    width: 40px;
+    height: 250px;
+    background: white;
+}
+
+.black-key {
+    margin: 0 5px;
+    width: 30px;
+    height: 160px;
+    background: black;
+}
+
+.spacer {
+    width: 20px;
+    float: left;
+}
+
+.option-panel {
+    margin: 20px 0 20px 0;
+}
+
+.prompt-row {
+    font-size: 14px;
+}
+
+.track {
+    padding-left: 2.5%;
+    width: 95%;
+}
+
+.track-name {
+    text-align: right;
+}
+
+.beats-panel {
+    text-align: left;
+    overflow-x: auto;
+}
+
+.beat-btn {
+    height: 30px;
+    width: 30px;
+    border: 1px solid black;
+    border-radius: 5px;
+    background-color: #222;
+    cursor: pointer;
+}
+
+.beat-btn:hover {
+    border: 1px solid #888;
+}
+
+.slider {
+    border-radius: 6px;
+    width: 90%;
+    min-width: 60px;
+    -webkit-appearance: none;
+    background-color: #222;
+    overflow: hidden;
+}
+
+.slider-master {
+    border-radius: 7px;
+    width: 80%;
+    min-width: 200px;
+    margin: 0 10px 0 10px;
+    -webkit-appearance: none;
+    background-color: #222;
+    overflow: hidden;
+}
+
+.slider::-webkit-slider-runnable-track {
+    height: 12px;
+    -webkit-appearance: none;
+    color: rgb(53,202,197);
+    margin-top: -1px;
+}
+
+.slider::-webkit-slider-thumb {
+    width: 12px;
+    -webkit-appearance: none;
+    height: 12px;
+    cursor: pointer;
+    background: #555;
+    box-shadow: -500px 0 0 494px rgb(53,202,197);
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.slider-master::-webkit-slider-runnable-track {
+    height: 14px;
+    -webkit-appearance: none;
+    color: rgb(53,202,197);
+}
+
+.slider-master::-webkit-slider-thumb {
+    width: 14px;
+    -webkit-appearance: none;
+    height: 14px;
+    cursor: pointer;
+    background: #555;
+    box-shadow: -500px 0 0 493px rgb(53,202,197);
+    border-radius: 7px;
+    cursor: pointer;
+}
+
+.number-input {
+    margin: 0 10px 0 10px;
+    padding: 5px;
+    width: 60px;
+    height: 30px;
+    border: 1px solid black;
+    border-radius: 5px;
+    background-color: #222;
+    color: #aaaaaa;
+}
+
+.unselectable {
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}

@@ -4,6 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="drum-machine.css">
 
 	<!-- shims -->
 	<script src="midi-js/inc/shim/Base64.js" type="text/javascript"></script>
@@ -22,37 +23,7 @@
 	<script src="midi-js/js/util/dom_request_xhr.js" type="text/javascript"></script>
 	<script src="midi-js/js/util/dom_request_script.js" type="text/javascript"></script>
 
-    <title>COMP4431 Multimedia Computing - Lab 1 MIDI Keyboard</title>
-
-    <style>
-      body { background-color: #444; color: #aaaaaa; }
-      .controls { float: left; margin: 0 20px 20px 0; }
-      .keyboard { float: left; position: relative; margin-top: 40px; width: 562px; height: 252px; border: 1px solid black; background: black; }
-      .white-keys, .black-keys { position: absolute; }
-      .white-key, .black-key { float: left; border: 1px solid black; border-radius: 4px; }
-      .white-key { width: 40px; height: 250px; background: white; }
-      .black-key { margin: 0 5px; width: 30px; height: 160px; background: black; }
-      .spacer { width: 20px; float: left; }
-
-      .option-panel { margin: 20px 0 20px 0; }
-      .prompt-row { font-size: 14px; }
-
-      .track { padding-left: 2.5%; width: 95%; }
-      .track-name { text-align: right; }
-      .beats-panel { text-align: left; overflow-x: auto; }
-      .beat-btn { height: 30px; width: 30px; border: 1px solid black; border-radius: 5px; background-color: #222; cursor: pointer; }
-      .beat-btn:hover { border: 1px solid #888; }
-      .slider { border-radius: 6px; width: 90%; min-width: 60px; -webkit-appearance: none; background-color: #222; overflow: hidden; }
-      .slider-master { border-radius: 7px; width: 80%; min-width: 200px; margin: 0 10px 0 10px; -webkit-appearance: none; background-color: #222; overflow: hidden; }
-      .slider::-webkit-slider-runnable-track { height: 12px; -webkit-appearance: none; color: rgb(53,202,197); margin-top: -1px; }
-      .slider::-webkit-slider-thumb { width: 12px; -webkit-appearance: none; height: 12px; cursor: pointer; background: #555; box-shadow: -500px 0 0 494px rgb(53,202,197); border-radius: 6px; cursor:pointer; }
-      .slider-master::-webkit-slider-runnable-track { height: 14px; -webkit-appearance: none; color: rgb(53,202,197); }
-      .slider-master::-webkit-slider-thumb { width: 14px; -webkit-appearance: none; height: 14px; cursor: pointer; background: #555; box-shadow: -500px 0 0 493px rgb(53,202,197); border-radius: 7px; cursor:pointer; }
-
-      .number-input { margin: 0 10px 0 10px; padding: 5px; width: 60px; height: 30px; border: 1px solid black; border-radius: 5px; background-color: #222; color: #aaaaaa; }
-
-      .unselectable { -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none; }
-    </style>
+    <title>COMP4431 Multimedia Computing - Project Drum Machine (M2)</title>
   </head>
   <body>
     <div class="p-3 container">
@@ -174,9 +145,9 @@
                   <div class="unselectable">Tempo</div>
                   <input class="number-input" type="number" name="quantity" min="40" max="200" value="80" />
                 </div>
-              </div>              
+              </div>
             </div>
-            
+
             <div class="track unselectable">
               <div class="row prompt-row">
                 <div class="track-name col-2">Tracks</div>
@@ -219,12 +190,12 @@
                 <div class="col-1">
                   <input id="track-2-volume" class="slider" type="range" min="0" max="100" value="100" />
                 </div>
-                <div class="col-1">                  
+                <div class="col-1">
                   <input id="track-2-pitch" class="slider" type="range" min="0" max="100" value="50" />
                 </div>
               </div>
             </div>
-           
+
           </div>
         </div>
       </form>
@@ -233,7 +204,7 @@
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js" integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k" crossorigin="anonymous"></script>
 
-    <!-- the lab JavaScript --> 
+    <!-- the lab JavaScript -->
     <script src="midi-keyboard.js" type="text/javascript"></script>
   </body>
 </html>
