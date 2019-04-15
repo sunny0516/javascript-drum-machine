@@ -146,9 +146,43 @@ body {
     color: #aaaaaa;
 }
 
+.text-input {
+    margin: 0 10px 0 10px;
+    padding: 5px;
+    height: 30px;
+    border: 1px solid black;
+    border-radius: 5px;
+    background-color: #222;
+    color: #aaaaaa;
+}
+
+.new-track-btn {
+    height: 30px;
+    width: 90px;
+    border: 1px solid black;
+    border-radius: 5px;
+    background: url("button-back.png") no-repeat;
+    background-size: 100% 100%;
+    cursor: pointer;
+    color: #aaaaaa;
+}
+
+.new-track-btn:hover {
+    color: rgb(53, 202, 197);
+}
+
 .unselectable {
     -webkit-user-select: none;
     -moz-user-select: none;
     -ms-user-select: none;
     user-select: none;
+}
+
+.close {
+    color: #aaaaaa;
+    opacity: 1;
+}
+
+.close:hover {
+    color: #888888;
 }

@@ -155,43 +155,22 @@
                 <div class="col-1">volume</div>
                 <div class="col-1">pitch</div>
               </div>
-              <div class="row">
-                <div class="track-name col-2">Example 1</div>
-                <div class="beats-panel col-7">
-                  <button class="beat-btn" type="button" track="1" code="0"></button>
-                  <button class="beat-btn" type="button" track="1" code="1"></button>
-                  <button class="beat-btn" type="button" track="1" code="2"></button>
-                  <button class="beat-btn" type="button" track="1" code="3"></button>
-                  <button class="beat-btn" type="button" track="1" code="4"></button>
-                  <button class="beat-btn" type="button" track="1" code="5"></button>
-                  <button class="beat-btn" type="button" track="1" code="6"></button>
-                  <button class="beat-btn" type="button" track="1" code="7"></button>
-                </div>
-                <div class="col-1">
-                  <input id="track-1-volume" class="slider" type="range" min="0" max="100" value="100" />
-                </div>
-                <div class="col-1">
-                  <input id="track-1-pitch" class="slider" type="range" min="0" max="100" value="50" />
-                </div>
+              <div id="track-area">
               </div>
+            </div>
 
+            <div class="option-panel unselectable">
               <div class="row">
-                <div class="track-name col-2">Example 2</div>
-                <div class="beats-panel col-7">
-                  <button class="beat-btn" type="button" track="2" code="0"></button>
-                  <button class="beat-btn" type="button" track="2" code="1"></button>
-                  <button class="beat-btn" type="button" track="2" code="2"></button>
-                  <button class="beat-btn" type="button" track="2" code="3"></button>
-                  <button class="beat-btn" type="button" track="2" code="4"></button>
-                  <button class="beat-btn" type="button" track="2" code="5"></button>
-                  <button class="beat-btn" type="button" track="2" code="6"></button>
-                  <button class="beat-btn" type="button" track="2" code="7"></button>
+                <div class="col-5">
+                  <label class="unselectable">Name</label>
+                  <input id="track-add-name" class="text-input" type="text" placeholder="Name here" />
                 </div>
-                <div class="col-1">
-                  <input id="track-2-volume" class="slider" type="range" min="0" max="100" value="100" />
+                <div class="col-4">
+                  <label class="unselectable">Drum Type</label>
+                  <input id="track-add-drumtype" class="number-input" type="number" min="35" max="81" value="35" />
                 </div>
-                <div class="col-1">
-                  <input id="track-2-pitch" class="slider" type="range" min="0" max="100" value="50" />
+                <div class="col-2">
+                  <button id="track-add" class="new-track-btn" type="button">Add Track</button>
                 </div>
               </div>
             </div>
