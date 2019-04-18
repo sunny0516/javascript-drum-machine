@@ -7,6 +7,9 @@ var lowest_pitch = 60;
 // Theoretical: 35 - 81 inclusive
 var tracks = [];
 
+// Number of buttons per track
+var track_length = 16;
+
 function handlePianoKeyPress(evt) {
     var this_key, this_amplitude;
 
@@ -73,24 +76,35 @@ function handlePianoKeyRelease(evt) {
     console.log("Key release event for key " + this_pitch + "!");
 }
 
+function getIndexFromTrackID(track_id) {
+    for (let i = 0; i < tracks.length; i++) {
+        if (tracks[i].id == track_id) {
+            return i;
+        }
+    }
+    return -1;
+}
+
 function handleDrumKeyPress(evt, track, btn_id, activate=true) {
     let master_volume = parseInt($("#master-volume").val());
     let private_volume = parseInt($("#track-" + track + "-volume").val());
     let volume = master_volume * private_volume / 128;
-    let drumtype = tracks[track - 1].drumtype;
+    let track_index = getIndexFromTrackID(track);
+    let drumtype = tracks[track_index].drumtype;
     if (activate) {
-        tracks[track - 1].hits[btn_id] = 1; // store value into tracks
+        tracks[track_index].hits[btn_id] = 1; // store value into tracks
         MIDI.noteOn(0, drumtype, volume); // start a MIDI note
     }
     else {
-        tracks[track - 1].hits[btn_id] = 0;
+        tracks[track_index].hits[btn_id] = 0;
     }
     // Show a simple message in the console
     console.log("Key press event "+ drumtype +" from track " + track + "!");
 }
 
 function handleDrumKeyRelease(evt, track) {
-    let drumtype = tracks[track - 1].drumtype;
+    let track_index = getIndexFromTrackID(track);
+    let drumtype = tracks[track_index].drumtype;
     MIDI.noteOff(0, drumtype);
 }
 
@@ -102,11 +116,12 @@ function addTrack(name, drumtype) {
     }
 
     // Add the track to tracks array
-    tracks.push({id: track_id, drumtype: drumtype, hits: [0, 0, 0, 0, 0, 0, 0, 0]});
+    let hits_array = Array(track_length).fill(0);
+    tracks.push({id: track_id, drumtype: drumtype, hits: hits_array});
 
     // Prepare the element to append for each row
     let elem = '<div class="row"><div class="track-name col-2">' + name + '</div><div class="beats-panel col-7">';
-    for (let i = 0; i < 8; i++) {
+    for (let i = 0; i < track_length; i++) {
         elem += '<button class="beat-btn" type="button" track="' + track_id + '" code="' + i + '"></button> ';
     }
     elem += '</div><div class="col-1"><input id="track-' + track_id + '-volume" class="slider" type="range" min="0" max="100" value="100" /></div>';
