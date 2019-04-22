@@ -6,7 +6,8 @@ var lowest_pitch = 60;
 
 // Theoretical: 35 - 81 inclusive
 var tracks = [];
-
+var drumPlayTimeoutId = null; // to store the drum timeout id
+var drumPlayInfo = null;
 // Number of buttons per track
 var track_length = 16;
 
@@ -85,6 +86,103 @@ function getIndexFromTrackID(track_id) {
     return -1;
 }
 
+function playPattern() {
+    console.log("play");
+    // remove the original play function and append the new pause function
+    let playBtn = document.getElementById("play-btn");
+    playBtn.setAttribute("onclick", "pausePattern()");
+    // calcuate speed
+    let bpm = parseInt($("#tempo").val());
+    let dt = 1000 / 4 / (bpm / 60);
+    // check whether this is resuming or starting
+    if (drumPlayInfo) 
+        nextBeat(drumPlayInfo + 1, dt);
+    else 
+        nextBeat(0, dt);
+    // Change the play button into pause button
+    $("#play-btn").html('<i class="fas fa-pause"></i>');    
+}
+
+function pausePattern() { 
+    // stop the timeout
+    clearTimeout(drumPlaying);
+    let playBtn = document.getElementById("play-btn");
+    playBtn.setAttribute("onclick", "playPattern()")
+    // Change the pause button into play button
+    $("#play-btn").html('<i class="fas fa-play"></i>');  
+}
+
+function stopPattern() {
+    clearTimeout(drumPlaying);
+    // light off all buttons
+    lightResumeAllX(drumPlayInfo);
+    drumPlayInfo = null;
+    // Change the the play button to play button anyway
+    $("#play-btn").html('<i class="fas fa-play"></i>'); 
+    let playBtn = document.getElementById("play-btn");
+    playBtn.setAttribute("onclick", "playPattern()");
+}
+
+function nextBeat(n, dt) {
+    // reach the last button => light off all buttons
+    if (n > track_length - 1) {
+        lightResumeAllX(n - 1);
+        // reset info back to null
+        drumPlayInfo = null;        
+        // Change the pause button into play button
+        $("#play-btn").html('<i class="fas fa-play"></i>');
+        let playBtn = document.getElementById("play-btn");
+        playBtn.setAttribute("onclick", "playPattern()");
+        return;
+    }
+    // update the global drum playing info
+    drumPlayInfo = n;
+    // play the drum beat in each track
+    for (let i = 0; i < tracks.length; i++) {
+        let id = tracks[i].id;
+        // Light off the previous column then light on this column
+        lightResumeX(id, n - 1)
+        lightUpX(id, n);
+
+        // handle volume with real-time calculation
+        let m_volume = parseInt($("#master-volume").val());
+        let p_volume = parseInt($("#track-" + id + "-volume").val());
+        let volume = m_volume * p_volume / 128;
+
+        // format: {id: track_id, drumtype: drumtype, hits: hits_array}
+        let drumtype = tracks[i].drumtype;
+        if (tracks[i].hits[n]) {
+            MIDI.noteOn(0, drumtype, volume);
+            // TODO see if 50ms is a good value
+            setTimeout(() => {MIDI.noteOff(0, drumtype)}, 50);
+        }
+    }
+    drumPlaying = setTimeout(() => {
+        nextBeat(n+1, dt);
+    }, dt);
+}
+
+function lightUpX(id, x) {
+    let beatBtn = document.getElementById("beat-btn-" + id + "-" + x);
+    if (beatBtn.style.backgroundColor == "rgb(53, 202, 197)") beatBtn.style.backgroundColor = "rgb(150, 230, 230)";
+    else beatBtn.style.backgroundColor = "#555";
+}
+
+function lightResumeX(id, x) {
+    if (x < 0) return;
+    let beatBtn = document.getElementById("beat-btn-" + id + "-" + x);
+    if (beatBtn.style.backgroundColor == "rgb(150, 230, 230)")
+        beatBtn.style.backgroundColor = "rgb(53, 202, 197)";
+    else beatBtn.style.backgroundColor = "#222";
+}
+
+function lightResumeAllX(x) {
+    for (let i = 0; i < tracks.length; i++) {
+        let id = tracks[i].id;
+        lightResumeX(id, x);
+    }
+}
+
 function handleDrumKeyPress(evt, track, btn_id, activate=true) {
     let master_volume = parseInt($("#master-volume").val());
     let private_volume = parseInt($("#track-" + track + "-volume").val());
@@ -122,9 +220,10 @@ function addTrack(name, drumtype) {
     // Prepare the element to append for each row
     let elem = '<div class="row"><div class="track-name col-2">' + name + '</div><div class="beats-panel col-7">';
     for (let i = 0; i < track_length; i++) {
-        elem += '<button class="beat-btn" type="button" track="' + track_id + '" code="' + i + '"></button> ';
+        elem += '<button class="beat-btn" type="button" id="beat-btn-'+track_id+'-'+i+
+        '" track="' + track_id + '" code="' + i + '"></button> ';
     }
-    elem += '</div><div class="col-1"><input id="track-' + track_id + '-volume" class="slider" type="range" min="0" max="100" value="100" /></div>';
+    elem += '</div><div class="col-1"><input id="track-' + track_id + '-volume" class="slider" type="range" min="0" max="128" value="128" /></div>';
     elem += '<div class="col-1"><input id="track-' + track_id + '-pitch" class="slider" type="range" min="0" max="100" value="50" /></div>';
     elem += '<div class="col-1"><button type="button" track="' + track_id + '" class="close" aria-label="Close"><span aria-hidden="true">&times;</span></button></div></div>';
 
