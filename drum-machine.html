@@ -152,8 +152,16 @@
 	              </div>
 	          	</div>
 	          	<div class="col-6">
-	          	  <button id="play-btn" class="gradient-bg rect-btn" type="button" onclick="playPattern()">‎<i class="fas fa-play"></i></button>
-	          	  <button id="stop-btn" class="gradient-bg rect-btn" type="button" onclick="stopPattern()"><i class="fas fa-stop"></i></button>
+	          	  <div class="row">
+	          	    <button id="play-btn" class="gradient-bg rect-btn" type="button" onclick="playPattern()">‎<i class="fas fa-play"></i></button>
+	          	    <button id="stop-btn" class="gradient-bg rect-btn" type="button" onclick="stopPattern()"><i class="fas fa-stop"></i></button>
+	          	    <button id="loop-btn" class="gradient-bg rect-btn" type="button" onclick="toggleLoop()" data-toggle="tooltip" title="Loop All Pages"><i id="loop-btn-icon" class="fas fa-redo"></i></button>
+	          	  </div>
+	          	  <div class="row">
+	          	  	<button id="page-add-btn" class="gradient-bg rect-btn" type="button" onclick="popPage()">‎<i class="fas fa-minus"></i></button>
+	          	  	<div id="page-row"><button id="btn-page-1" class="gradient-bg rect-btn-toggle rect-btn-enabled" type="button" onclick="switchPage(1)">‎1</button></div>
+	          	    <button id="page-add-btn" class="gradient-bg rect-btn" type="button" onclick="addPage()">‎<i class="fas fa-plus"></i></button>
+	          	  </div>
 	          	</div>
 	          </div>
             </div>
@@ -191,6 +199,7 @@
     </div>
 
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js" integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k" crossorigin="anonymous"></script>
 
     <!-- the lab JavaScript -->

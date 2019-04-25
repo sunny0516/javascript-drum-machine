@@ -6,8 +6,12 @@ var lowest_pitch = 60;
 
 // Theoretical: 35 - 81 inclusive
 var tracks = [];
+var pages = [tracks]; // an indexed array of tracks
 var drumPlayTimeoutId = null; // to store the drum timeout id
 var drumPlayInfo = null;
+var loopSingle = true;
+var inPageLoop = false;
+var currentPage = 1;
 // Number of buttons per track
 var track_length = 16;
 
@@ -86,8 +90,72 @@ function getIndexFromTrackID(track_id) {
     return -1;
 }
 
+function switchPage(page, implicit=true) {
+    if (implicit && drumPlayInfo) return;
+    tracks = pages[page - 1];
+    currentPage = page;
+    updateAllBeatButton();
+    // switch the indication of buttons as well
+    let pageRow = document.getElementById("page-row")
+    for (let i = 0; i < pageRow.childNodes.length; i++) {
+        let btn = pageRow.childNodes[i];
+        if (btn.id == "btn-page-" + page) btn.classList.add("rect-btn-enabled");
+        else btn.classList.remove("rect-btn-enabled");       
+    }
+}
+
+// update all beats displayed base on the current values in tracks
+function updateAllBeatButton() {
+    for (let i = 0; i < tracks.length; i++) {
+        let id = tracks[i].id;
+        for (let n = 0; n < track_length; n++) {
+            let beatBtn = document.getElementById("beat-btn-" + id + "-" + n);
+            if (tracks[i].hits[n])
+                beatBtn.style.backgroundColor = "rgb(53, 202, 197)";
+            else beatBtn.style.backgroundColor = "#222";
+        }
+    }
+}
+
+function popPage() {
+    if (drumPlayInfo) return;
+    if (pages.length <= 1) return;
+    if (currentPage == pages.length) switchPage(pages.length - 1);
+    pages.pop();
+    // Remove the button
+    let pageId = pages.length;
+    let pageRow = document.getElementById("page-row");
+    pageRow.removeChild(pageRow.lastChild);
+}
+
+function addPage() {
+    if (drumPlayInfo) return;
+    // Create a new pattern and append into global pages
+    var pattern = [];
+    for (let i = 0; i < tracks.length; i++) {
+        // do a member-wise copying
+        var t = Object.assign({}, tracks[i]);
+        t.hits = t.hits.map(v => 0);
+        pattern.push(t);
+    }
+    pages.push(pattern);
+
+    let pageId = pages.length;
+    let pageRow = document.getElementById("page-row");
+    // Append the button
+    var btn = document.createElement("button");
+    btn.id = "btn-page-" + pageId;
+    btn.classList.add("gradient-bg");
+    btn.classList.add("rect-btn-toggle");
+    btn.setAttribute("type", "button");
+    btn.setAttribute("onclick", "switchPage(" + pageId + ")");
+    btn.textContent = pageId;
+    pageRow.appendChild(btn);
+    // Switch to the new created page
+    switchPage(pageId);
+}
+
 function playPattern() {
-    console.log("play");
     // remove the original play function and append the new pause function
     let playBtn = document.getElementById("play-btn");
     playBtn.setAttribute("onclick", "pausePattern()");
@@ -113,6 +181,7 @@ function pausePattern() {
 }
 
 function stopPattern() {
+    if (!drumPlayInfo) return;    
     clearTimeout(drumPlaying);
     // light off all buttons
     lightResumeAllX(drumPlayInfo);
@@ -127,13 +196,32 @@ function nextBeat(n, dt) {
     // reach the last button => light off all buttons
     if (n > track_length - 1) {
         lightResumeAllX(n - 1);
+        if (loopSingle) {
+            // back to the beginning of this page
+            nextBeat(0, dt);  
+        }
+        else {
+            if (currentPage < pages.length) {
+                // Start from next page
+                switchPage(currentPage + 1, false);
+            }
+            else {
+                // Back to the beginning of page 1
+                switchPage(1, false);                 
+            }
+            nextBeat(0, dt);
+        }       
+        return; 
+
+        /*
         // reset info back to null
-        drumPlayInfo = null;        
+        drumPlayInfo = null;
         // Change the pause button into play button
         $("#play-btn").html('<i class="fas fa-play"></i>');
         let playBtn = document.getElementById("play-btn");
         playBtn.setAttribute("onclick", "playPattern()");
         return;
+        */
     }
     // update the global drum playing info
     drumPlayInfo = n;
@@ -171,8 +259,7 @@ function lightUpX(id, x) {
 function lightResumeX(id, x) {
     if (x < 0) return;
     let beatBtn = document.getElementById("beat-btn-" + id + "-" + x);
-    if (beatBtn.style.backgroundColor == "rgb(150, 230, 230)")
-        beatBtn.style.backgroundColor = "rgb(53, 202, 197)";
+    if (beatBtn.style.backgroundColor == "rgb(150, 230, 230)") beatBtn.style.backgroundColor = "rgb(53, 202, 197)";
     else beatBtn.style.backgroundColor = "#222";
 }
 
@@ -180,6 +267,20 @@ function lightResumeAllX(x) {
     for (let i = 0; i < tracks.length; i++) {
         let id = tracks[i].id;
         lightResumeX(id, x);
+    }
+}
+
+function toggleLoop() {
+    loopSingle = !loopSingle;
+    let loopBtn = document.getElementById("loop-btn");
+    let loopBtnIcon = document.getElementById("loop-btn-icon");
+    if (loopSingle) {
+        loopBtnIcon.classList.remove("fa-sync-alt");
+        loopBtnIcon.classList.add("fa-redo");     
+    }
+    else {
+        loopBtnIcon.classList.remove("fa-redo");
+        loopBtnIcon.classList.add("fa-sync-alt");
     }
 }
 
@@ -191,7 +292,8 @@ function handleDrumKeyPress(evt, track, btn_id, activate=true) {
     let drumtype = tracks[track_index].drumtype;
     if (activate) {
         tracks[track_index].hits[btn_id] = 1; // store value into tracks
-        MIDI.noteOn(0, drumtype, volume); // start a MIDI note
+        // start a MIDI note only if the drum is not playing
+        if (!drumPlayInfo) MIDI.noteOn(0, drumtype, volume);
     }
     else {
         tracks[track_index].hits[btn_id] = 0;
@@ -213,9 +315,11 @@ function addTrack(name, drumtype) {
         track_id = tracks[tracks.length - 1].id + 1;
     }
 
-    // Add the track to tracks array
-    let hits_array = Array(track_length).fill(0);
-    tracks.push({id: track_id, drumtype: drumtype, hits: hits_array});
+    // Add the track to all pages
+    for (let i = 0; i < pages.length; i++) {
+        let hits_array = Array(track_length).fill(0);
+        pages[i].push({id: track_id, drumtype: drumtype, hits: hits_array});
+    }
 
     // Prepare the element to append for each row
     let elem = '<div class="row"><div class="track-name col-2">' + name + '</div><div class="beats-panel col-7">';
@@ -231,6 +335,10 @@ function addTrack(name, drumtype) {
 }
 
 $(document).ready(function() {
+    $('[data-toggle="tooltip"]').tooltip();
+    // Add the two test channels
+    addTrack("Example 1", 35);
+    addTrack("Example 2", 38);
     MIDI.loadPlugin({
         soundfontUrl: "./midi-js/soundfont/",
         // You can optionally list the instruments here to preload the
@@ -258,10 +366,6 @@ $(document).ready(function() {
             // I have changed "gunshot" (127) into the drum soundfont (AG)
             MIDI.programChange(0, 127);  // Go to the drum soundfont
 
-            // Add the two test channels
-            addTrack("Example 1", 35);
-            addTrack("Example 2", 38);
-
             // Set up the event handlers for all the buttons
             $(".piano-key").on("mousedown", handlePianoKeyPress);
             $(".piano-key").on("mouseup", handlePianoKeyRelease);
@@ -269,14 +373,14 @@ $(document).ready(function() {
             $(document.body).on("mousedown", ".beat-btn", function(evt) {
                 let track_id = parseInt($(this).attr("track"));
                 let btn_id = parseInt($(this).attr("code"));
-                this.on = !this.on;
-
-                if (this.on) {
+                let indx = getIndexFromTrackID(track_id);
+                let on = (tracks[indx].hits[btn_id] ? false : true);
+                if (on) {
                     $(this).css("background-color", "rgb(53,202,197)");
                 } else {
                     $(this).css("background-color", "#222");
                 }
-                handleDrumKeyPress(evt, track_id, btn_id, this.on);
+                handleDrumKeyPress(evt, track_id, btn_id, on);
             });
             $(document.body).on("mouseup", ".beat-btn", function(evt) {
                 let track_id = parseInt($(this).attr("track"));
@@ -285,11 +389,15 @@ $(document).ready(function() {
 
             // Delete button for each track.
             $(document.body).on("click", ".close", function() {
+                if (drumPlayInfo) return; // cannot remove any when playing
                 let track_id = parseInt($(this).attr("track"));
                 $(this).parent().parent().remove();
-                tracks = tracks.filter(function(elem) {
-                    return elem.id != track_id;
-                });
+                for (let i = 0; i < pages.length; i++) {
+                    pages[i] = pages[i].filter(elem => elem.id != track_id);                    
+                    // refer track again since pages[i] is a new reference now
+                    if (tracks.id == pages[i].id) tracks = pages[i];
+                }
+                console.log(pages, tracks);
             });
 
             // Add track button.
