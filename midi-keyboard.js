@@ -375,6 +375,7 @@ function loadFile() {
     // After checking file is not of .drum type, start reading it.
     let reader = new FileReader();
     reader.readAsText(document.getElementById("file-name").files[0]);
+    document.getElementById("file-name").value = "";
     reader.onload = function(e) {
         let result = JSON.parse(e.target.result);
 
