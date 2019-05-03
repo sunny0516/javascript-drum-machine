@@ -153,6 +153,9 @@
 	          	</div>
 	          	<div class="col-6">
 	          	  <div class="row">
+                    <input id="file-name" type="file" accept=".drum" style="display:none" />
+                    <button id="load-btn" class="gradient-bg rect-btn" type="button" onclick="promptLoadFile()">‎<i class="fas fa-folder-open"></i></button>
+                    <a href="" onclick="saveFile(this)"><button id="save-btn" class="gradient-bg rect-btn" type="button">‎<i class="fas fa-save"></i></button></a>
 	          	    <button id="play-btn" class="gradient-bg rect-btn" type="button" onclick="playPattern()">‎<i class="fas fa-play"></i></button>
 	          	    <button id="stop-btn" class="gradient-bg rect-btn" type="button" onclick="stopPattern()"><i class="fas fa-stop"></i></button>
 	          	    <button id="loop-btn" class="gradient-bg rect-btn" type="button" onclick="toggleLoop()" data-toggle="tooltip" title="Loop All Pages"><i id="loop-btn-icon" class="fas fa-redo"></i></button>

@@ -98,7 +98,7 @@ function getPrivateVolume(track_id) {
     return volume * (unmuted ? 1 : 0);
 }
 
-function switchPage(page, implicit=true) {
+function switchPage(page, implicit = true) {
     if (implicit && drumPlayInfo) return;
     tracks = pages[page - 1];
     currentPage = page;
@@ -161,6 +161,18 @@ function addPage() {
     pageRow.appendChild(btn);
     // Switch to the new created page
     switchPage(pageId);
+}
+
+function clearPage() {
+    for (let i = 0; i < tracks.length; i++) {
+        for (let j = 0; j < tracks[i].hits.length; j++) {
+            // Remove this hit inside array and track
+            if (tracks[i].hits[j] == 1) {
+                tracks[i].hits[j] = 0;
+                $("#beat-btn-" + tracks[i].id + "-" + j).css("background-color", "#222");
+            }
+        }
+    }
 }
 
 function playPattern() {
@@ -294,18 +306,6 @@ function toggleLoop() {
     }
 }
 
-function clearPage() {
-    for (let i = 0; i < tracks.length; i++) {
-        for (let j = 0; j < tracks[i].hits.length; j++) {
-            // Remove this hit inside array and track
-            if (tracks[i].hits[j] == 1) {
-                tracks[i].hits[j] = 0;
-                $("#beat-btn-" + tracks[i].id + "-" + j).css("background-color", "#222");
-            }
-        }
-    }
-}
-
 function handleDrumKeyPress(evt, track, btn_id, activate=true) {
     let master_volume = parseInt($("#master-volume").val());
     let private_volume = getPrivateVolume(track);
@@ -330,17 +330,21 @@ function handleDrumKeyRelease(evt, track) {
     MIDI.noteOff(0, drumtype);
 }
 
-function addTrack(name, drumtype) {
+function addTrack(name, drumtype, id = -1) {
     // Determine track_id of track that we have to add
     let track_id = 1;
-    if (tracks.length > 0) {
+    if (tracks.length > 0 && id == -1) {
         track_id = tracks[tracks.length - 1].id + 1;
+    } else if (tracks.length != 0) {
+        track_id = id;
     }
 
     // Add the track to all pages
-    for (let i = 0; i < pages.length; i++) {
-        let hits_array = Array(track_length).fill(0);
-        pages[i].push({id: track_id, drumtype: drumtype, hits: hits_array});
+    if (id == -1) {
+        for (let i = 0; i < pages.length; i++) {
+            let hits_array = Array(track_length).fill(0);
+            pages[i].push({id: track_id, drumtype: drumtype, hits: hits_array});
+        }
     }
 
     // Prepare the element to append for each row
@@ -354,6 +358,61 @@ function addTrack(name, drumtype) {
     elem += '<div class="col-1"><button type="button" track="' + track_id + '" class="close" aria-label="Close"><span aria-hidden="true">&times;</span></button></div></div>';
 
     $("#track-area").append(elem);
+}
+
+function promptLoadFile() {
+    // We should stop playing existing music when we load a new one.
+    stopPattern();
+    $("#file-name").click();
+}
+
+function loadFile() {
+    let path = $("#file-name").val();
+    if (path.substring(path.length - 4, path.length) != "drum") {
+        return;
+    }
+
+    // After checking file is not of .drum type, start reading it.
+    let reader = new FileReader();
+    reader.readAsText(document.getElementById("file-name").files[0]);
+    reader.onload = function(e) {
+        let result = JSON.parse(e.target.result);
+
+        // Update correct amount of pages. We need to add (diff) amount of pages.
+        let diff = result.pages.length - pages.length;
+        if (diff > 0) {
+            for (let i = 0; i < diff; i++) addPage();
+        } else if (diff < 0) {
+            for (let i = 0; i > diff; i--) popPage();
+        }
+
+        // Delete all tracks
+        pages = result.pages;
+        $("#track-area").html("");
+
+        // And add them back again
+        for (let i = 0; i < pages[0].length; i++) {
+            addTrack(result.names[i], pages[0][i].drumtype, pages[0][i].id);
+        }
+
+        // Finally switch back to first page
+        switchPage(1);
+    }
+
+}
+
+function saveFile(e) {
+    let hits = JSON.stringify(pages);
+    let names = [];
+    for (let i = 0; i < tracks.length; i++) {
+        // Get the corresponding name and stuff it into names array.
+        names.push($("#track-area > div").eq(i).find("div").eq(0).html());
+    }
+    let output = {pages: pages, names: names};
+    let blob = new Blob([JSON.stringify(output)], {type: "text/plain; charset=utf-8"});
+    let blobUrl = URL.createObjectURL(blob);
+    e.href = blobUrl;
+    e.download = "output.drum";
 }
 
 $(document).ready(function() {
@@ -441,6 +500,11 @@ $(document).ready(function() {
                 let drumtype = parseInt($("#track-add-drumtype").val());
                 addTrack(name, drumtype);
             })
+
+            // On change of file loader.
+            $("#file-name").on("change", function() {
+                loadFile();
+            });
 
             // You probably need to set up an event for your instrument change
             $('#program').change(function() {
