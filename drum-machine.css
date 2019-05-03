@@ -162,7 +162,7 @@ body {
 
 .new-track-btn {
     border: 1px solid black;
-    border-radius: 5px;    
+    border-radius: 5px;
     height: 30px;
     width: 90px;
     cursor: pointer;
@@ -171,26 +171,26 @@ body {
 
 .rect-btn, .rect-btn-toggle {
     border: 1px solid black;
-    border-radius: 5px; 
+    border-radius: 5px;
     height: 30px;
-    width: 30px;   
+    width: 30px;
     margin: 2px 2px 2px 2px;
     cursor: pointer;
     color: #aaaaaa;
     font-size: 12px;
     font-weight: bold;
-    outline: none;    
+    outline: none;
 }
 
 .rect-btn:hover {
-    color: rgb(53, 202, 197);  
+    color: rgb(53, 202, 197);
 }
 
 .rect-btn:focus { outline: none; }
 .rect-btn-toggle:focus { outline: none; }
 
 .rect-btn-enabled {
-    color: rgb(53, 202, 197);  
+    color: rgb(53, 202, 197);
 }
 
 .gradient-bg {
@@ -209,11 +209,12 @@ body {
     user-select: none;
 }
 
-.close {
+.close, .mute {
     color: #aaaaaa;
     opacity: 1;
 }
 
-.close:hover {
+.close:hover, .mute:hover {
     color: #888888;
+    cursor: pointer;
 }

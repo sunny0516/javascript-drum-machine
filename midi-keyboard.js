@@ -81,6 +81,7 @@ function handlePianoKeyRelease(evt) {
     console.log("Key release event for key " + this_pitch + "!");
 }
 
+// Helper function to get the index from the corresponding track ID.
 function getIndexFromTrackID(track_id) {
     for (let i = 0; i < tracks.length; i++) {
         if (tracks[i].id == track_id) {
@@ -88,6 +89,13 @@ function getIndexFromTrackID(track_id) {
         }
     }
     return -1;
+}
+
+// Helper function to get the volume (private volume / whether it is muted) from the corresponding track ID.
+function getPrivateVolume(track_id) {
+    let volume = parseInt($("#track-" + track_id + "-volume").val());
+    let unmuted = $("#track-" + track_id + "-mute").find("i").first().hasClass("fa-volume-up");
+    return volume * (unmuted ? 1 : 0);
 }
 
 function switchPage(page, implicit=true) {
@@ -234,7 +242,7 @@ function nextBeat(n, dt) {
 
         // handle volume with real-time calculation
         let m_volume = parseInt($("#master-volume").val());
-        let p_volume = parseInt($("#track-" + id + "-volume").val());
+        let p_volume = getPrivateVolume(id);
         let volume = m_volume * p_volume / 128;
 
         // format: {id: track_id, drumtype: drumtype, hits: hits_array}
@@ -300,7 +308,7 @@ function clearPage() {
 
 function handleDrumKeyPress(evt, track, btn_id, activate=true) {
     let master_volume = parseInt($("#master-volume").val());
-    let private_volume = parseInt($("#track-" + track + "-volume").val());
+    let private_volume = getPrivateVolume(track);
     let volume = master_volume * private_volume / 128;
     let track_index = getIndexFromTrackID(track);
     let drumtype = tracks[track_index].drumtype;
@@ -338,11 +346,11 @@ function addTrack(name, drumtype) {
     // Prepare the element to append for each row
     let elem = '<div class="row"><div class="track-name col-2">' + name + '</div><div class="beats-panel col-7">';
     for (let i = 0; i < track_length; i++) {
-        elem += '<button class="beat-btn" type="button" id="beat-btn-'+track_id+'-'+i+
+        elem += '<button class="beat-btn" type="button" id="beat-btn-' + track_id + '-' + i +
         '" track="' + track_id + '" code="' + i + '"></button> ';
     }
     elem += '</div><div class="col-1"><input id="track-' + track_id + '-volume" class="slider" type="range" min="0" max="128" value="128" /></div>';
-    elem += '<div class="col-1"><input id="track-' + track_id + '-pitch" class="slider" type="range" min="0" max="100" value="50" /></div>';
+    elem += '<div class="col-1"><span id="track-' + track_id + '-mute" class="mute"><i class="fas fa-volume-up"></i></button></div>';
     elem += '<div class="col-1"><button type="button" track="' + track_id + '" class="close" aria-label="Close"><span aria-hidden="true">&times;</span></button></div></div>';
 
     $("#track-area").append(elem);
@@ -412,6 +420,19 @@ $(document).ready(function() {
                     if (tracks.id == pages[i].id) tracks = pages[i];
                 }
                 console.log(pages, tracks);
+            });
+
+            // Mute button for each track.
+            $(document.body).on("click", ".mute", function() {
+                let muteBtn = $(this).find("i").first();
+                let unmuted = muteBtn.hasClass("fa-volume-up");   // Indicates whether this track is not muted.
+                if (unmuted) {
+                    muteBtn.addClass("fa-volume-mute");
+                    muteBtn.removeClass("fa-volume-up");
+                } else {
+                    muteBtn.addClass("fa-volume-up");
+                    muteBtn.removeClass("fa-volume-mute");
+                }
             });
 
             // Add track button.
