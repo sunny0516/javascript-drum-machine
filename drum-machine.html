@@ -142,13 +142,13 @@
 	                <div class="col-8">
 	                  <div class="unselectable">Master Volume</div>
 	                  <input id="master-volume" class="slider slider-master" type="range" min="0" max="128" value="128" />
-	                </div>       
+	                </div>
 	              </div>
 	              <div class="row">
 	              	<div class="col-4">
 					  <div class="unselectable">Tempo</div>
 					  <input id="tempo" class="number-input" type="number" name="quantity" min="40" max="200" value="80" />
-					</div>     
+					</div>
 	              </div>
 	          	</div>
 	          	<div class="col-6">
@@ -156,6 +156,7 @@
 	          	    <button id="play-btn" class="gradient-bg rect-btn" type="button" onclick="playPattern()">‎<i class="fas fa-play"></i></button>
 	          	    <button id="stop-btn" class="gradient-bg rect-btn" type="button" onclick="stopPattern()"><i class="fas fa-stop"></i></button>
 	          	    <button id="loop-btn" class="gradient-bg rect-btn" type="button" onclick="toggleLoop()" data-toggle="tooltip" title="Loop All Pages"><i id="loop-btn-icon" class="fas fa-redo"></i></button>
+                    <button id="loop-btn" class="gradient-bg rect-btn" type="button" onclick="clearPage()" data-toggle="tooltip" title="Clear Page"><i id="loop-btn-icon" class="fas fa-trash"></i></button>
 	          	  </div>
 	          	  <div class="row">
 	          	  	<button id="page-add-btn" class="gradient-bg rect-btn" type="button" onclick="popPage()">‎<i class="fas fa-minus"></i></button>

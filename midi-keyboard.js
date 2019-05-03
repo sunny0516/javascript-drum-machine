@@ -100,7 +100,7 @@ function switchPage(page, implicit=true) {
     for (let i = 0; i < pageRow.childNodes.length; i++) {
         let btn = pageRow.childNodes[i];
         if (btn.id == "btn-page-" + page) btn.classList.add("rect-btn-enabled");
-        else btn.classList.remove("rect-btn-enabled");       
+        else btn.classList.remove("rect-btn-enabled");
     }
 }
 
@@ -163,31 +163,31 @@ function playPattern() {
     let bpm = parseInt($("#tempo").val());
     let dt = 1000 / 4 / (bpm / 60);
     // check whether this is resuming or starting
-    if (drumPlayInfo) 
+    if (drumPlayInfo)
         nextBeat(drumPlayInfo + 1, dt);
-    else 
+    else
         nextBeat(0, dt);
     // Change the play button into pause button
-    $("#play-btn").html('<i class="fas fa-pause"></i>');    
+    $("#play-btn").html('<i class="fas fa-pause"></i>');
 }
 
-function pausePattern() { 
+function pausePattern() {
     // stop the timeout
     clearTimeout(drumPlaying);
     let playBtn = document.getElementById("play-btn");
     playBtn.setAttribute("onclick", "playPattern()")
     // Change the pause button into play button
-    $("#play-btn").html('<i class="fas fa-play"></i>');  
+    $("#play-btn").html('<i class="fas fa-play"></i>');
 }
 
 function stopPattern() {
-    if (!drumPlayInfo) return;    
+    if (!drumPlayInfo) return;
     clearTimeout(drumPlaying);
     // light off all buttons
     lightResumeAllX(drumPlayInfo);
     drumPlayInfo = null;
     // Change the the play button to play button anyway
-    $("#play-btn").html('<i class="fas fa-play"></i>'); 
+    $("#play-btn").html('<i class="fas fa-play"></i>');
     let playBtn = document.getElementById("play-btn");
     playBtn.setAttribute("onclick", "playPattern()");
 }
@@ -198,7 +198,7 @@ function nextBeat(n, dt) {
         lightResumeAllX(n - 1);
         if (loopSingle) {
             // back to the beginning of this page
-            nextBeat(0, dt);  
+            nextBeat(0, dt);
         }
         else {
             if (currentPage < pages.length) {
@@ -207,11 +207,11 @@ function nextBeat(n, dt) {
             }
             else {
                 // Back to the beginning of page 1
-                switchPage(1, false);                 
+                switchPage(1, false);
             }
             nextBeat(0, dt);
-        }       
-        return; 
+        }
+        return;
 
         /*
         // reset info back to null
@@ -275,12 +275,26 @@ function toggleLoop() {
     let loopBtn = document.getElementById("loop-btn");
     let loopBtnIcon = document.getElementById("loop-btn-icon");
     if (loopSingle) {
+        $(loopBtn).tooltip("hide").attr("data-original-title", "Loop All Pages").tooltip("show");
         loopBtnIcon.classList.remove("fa-sync-alt");
-        loopBtnIcon.classList.add("fa-redo");     
+        loopBtnIcon.classList.add("fa-redo");
     }
     else {
+        $(loopBtn).tooltip("hide").attr("data-original-title", "Loop Single Page").tooltip("show");
         loopBtnIcon.classList.remove("fa-redo");
         loopBtnIcon.classList.add("fa-sync-alt");
+    }
+}
+
+function clearPage() {
+    for (let i = 0; i < tracks.length; i++) {
+        for (let j = 0; j < tracks[i].hits.length; j++) {
+            // Remove this hit inside array and track
+            if (tracks[i].hits[j] == 1) {
+                tracks[i].hits[j] = 0;
+                $("#beat-btn-" + tracks[i].id + "-" + j).css("background-color", "#222");
+            }
+        }
     }
 }
 
@@ -393,7 +407,7 @@ $(document).ready(function() {
                 let track_id = parseInt($(this).attr("track"));
                 $(this).parent().parent().remove();
                 for (let i = 0; i < pages.length; i++) {
-                    pages[i] = pages[i].filter(elem => elem.id != track_id);                    
+                    pages[i] = pages[i].filter(elem => elem.id != track_id);
                     // refer track again since pages[i] is a new reference now
                     if (tracks.id == pages[i].id) tracks = pages[i];
                 }
