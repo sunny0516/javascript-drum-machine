@@ -169,7 +169,7 @@ body {
     color: #aaaaaa;
 }
 
-.rect-btn, .rect-btn-toggle {
+.rect-btn, .rect-btn-toggle select{
     border: 1px solid black;
     border-radius: 5px;
     height: 30px;
@@ -198,11 +198,6 @@ body {
     background-size: 100% 100%;
 }
 
-.dropdown {
-    position: relative;
-    display: inline-block;
-}
-
 select {
     border: 1px solid black;
     border-radius: 5px;
@@ -218,16 +213,6 @@ select {
     align-items: center;
 }
 
-.dropdown-content {
-    display: none;
-    width: 80px;
-    margin: 0px 3px 0px 10px;
-    position: absolute;
-    background-color: #222;
-    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
-    z-index: 1;
-}
-
 option {
     background-color: #222;
     color: black;
@@ -237,17 +222,6 @@ option {
     font-size: 12px;
     color: #aaaaaa;
 
-}
-
-.dropdown-content option:hover {background-color: #333}
-
-.dropdown:hover .dropdown-content {
-}
-
-.show {display:block;}
-
-.dropdown:hover .dropbtn {
-  background-color: #3e8e41;
 }
 
 .dropbtn:hover {
