@@ -169,7 +169,7 @@ body {
     color: #aaaaaa;
 }
 
-.rect-btn, .rect-btn-toggle select{
+.rect-btn, .rect-btn-toggle {
     border: 1px solid black;
     border-radius: 5px;
     height: 30px;
@@ -198,12 +198,12 @@ body {
     background-size: 100% 100%;
 }
 
-select {
+.dropbtn {
     border: 1px solid black;
     border-radius: 5px;
     height: 30px;
     width: 80px;
-    margin: 3px 0px 0px 10px;
+    margin: 3px 0px 5px 10px;
     cursor: pointer;
     color: #aaaaaa;
     font-size: 14px;
@@ -214,14 +214,13 @@ select {
 }
 
 option {
-    background-color: #222;
     color: black;
     padding: 2px 2px;
     text-decoration: none;
     display: block;
     font-size: 12px;
     color: #aaaaaa;
-
+    background-color: #222;
 }
 
 .dropbtn:hover {
