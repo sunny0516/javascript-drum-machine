@@ -148,6 +148,12 @@
 	              	<div class="col-4">
 					  <div class="unselectable">Tempo</div>
 					  <input id="tempo" class="number-input" type="number" name="quantity" min="40" max="200" value="80" />
+            <div class="unselectable">Template</div>
+              <select onchange="changeTemplate(this.value)" id="template-dropdown-btn" class="dropbtn gradient-bg">
+                <option value="">None</option>
+                <option value="/template/normal.drum">Normal</option>
+                <option value="/template/rock.drum">Rock</option>
+              </select>
 					</div>
 	              </div>
 	          	</div>

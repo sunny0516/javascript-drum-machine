@@ -366,8 +366,9 @@ function promptLoadFile() {
     $("#file-name").click();
 }
 
-function loadFile() {
-    let path = $("#file-name").val();
+function loadFile(path) {
+    //let path = $("#file-name").val();
+    console.log(path);
     if (path.substring(path.length - 4, path.length) != "drum") {
         return;
     }
@@ -378,28 +379,30 @@ function loadFile() {
     document.getElementById("file-name").value = "";
     reader.onload = function(e) {
         let result = JSON.parse(e.target.result);
+        parseLoaded(result);
+    };
+}
 
-        // Update correct amount of pages. We need to add (diff) amount of pages.
-        let diff = result.pages.length - pages.length;
-        if (diff > 0) {
-            for (let i = 0; i < diff; i++) addPage();
-        } else if (diff < 0) {
-            for (let i = 0; i > diff; i--) popPage();
-        }
-
-        // Delete all tracks
-        pages = result.pages;
-        $("#track-area").html("");
-
-        // And add them back again
-        for (let i = 0; i < pages[0].length; i++) {
-            addTrack(result.names[i], pages[0][i].drumtype, pages[0][i].id);
-        }
-
-        // Finally switch back to first page
-        switchPage(1);
+function parseLoaded(result) {
+    // Update correct amount of pages. We need to add (diff) amount of pages.
+    let diff = result.pages.length - pages.length;
+    if (diff > 0) {
+        for (let i = 0; i < diff; i++) addPage();
+    } else if (diff < 0) {
+        for (let i = 0; i > diff; i--) popPage();
     }
 
+    // Delete all tracks
+    pages = result.pages;
+    $("#track-area").html("");
+
+    // And add them back again
+    for (let i = 0; i < pages[0].length; i++) {
+        addTrack(result.names[i], pages[0][i].drumtype, pages[0][i].id);
+    }
+
+    // Finally switch back to first page
+    switchPage(1);
 }
 
 function saveFile(e) {
@@ -414,6 +417,28 @@ function saveFile(e) {
     let blobUrl = URL.createObjectURL(blob);
     e.href = blobUrl;
     e.download = "output.drum";
+}
+
+function changeTemplate(filename) {
+    var request = new XMLHttpRequest();
+        request.open('GET', filename);
+        request.onreadystatechange = request.onreadystatechange = function() {
+            if (request.readyState == 4 && request.status == 200) {
+                var result;
+                try {
+                    result = JSON.parse(request.responseText);
+                }
+                catch (err) {
+                    return;
+                }
+                parseLoaded(result);
+            }
+            else if (request.readyState == 4) {
+                console.log("Unable to find or open" + filename);
+                return;
+            }
+        }
+        request.send();
 }
 
 $(document).ready(function() {
@@ -504,7 +529,7 @@ $(document).ready(function() {
 
             // On change of file loader.
             $("#file-name").on("change", function() {
-                loadFile();
+                loadFile($("#file-name").val());
             });
 
             // You probably need to set up an event for your instrument change
