@@ -420,6 +420,7 @@ function saveFile(e) {
 }
 
 function changeTemplate(filename) {
+    stopPattern();
     var request = new XMLHttpRequest();
         request.open('GET', filename);
         request.onreadystatechange = request.onreadystatechange = function() {
@@ -432,6 +433,7 @@ function changeTemplate(filename) {
                     return;
                 }
                 parseLoaded(result);
+                playPattern();
             }
             else if (request.readyState == 4) {
                 console.log("Unable to find or open" + filename);
