@@ -540,7 +540,6 @@ $(document).ready(function() {
                         let trackId = parseInt(e.target.id.replace('drumtype-', ''));
                         let indx = getIndexFromTrackID(trackId);
                         tracks[indx].drumtype = parseInt(c);
-                        console.log(tracks);
                         $this.data('before', $this.html());
                     }
                     else {
