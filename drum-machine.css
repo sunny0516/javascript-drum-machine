@@ -61,6 +61,11 @@ body {
 
 .track-name {
     text-align: right;
+    outline: none;
+}
+
+.track-drumtype {
+    outline: none;
 }
 
 .beats-panel {

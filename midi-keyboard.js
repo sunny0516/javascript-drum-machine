@@ -348,14 +348,15 @@ function addTrack(name, drumtype, id = -1) {
     }
 
     // Prepare the element to append for each row
-    let elem = '<div class="row"><div class="track-name col-2">' + name + '</div><div class="beats-panel col-7">';
+    let elem = '<div class="row"><div class="track-name col-2" contenteditable="true">' + name + '</div>';
+    elem += '<div class="track-drumtype col-1" id="drumtype-' + track_id + '" contenteditable="true">' + drumtype + '</div><div class="beats-panel col-7">';
     for (let i = 0; i < track_length; i++) {
         elem += '<button class="beat-btn" type="button" id="beat-btn-' + track_id + '-' + i +
         '" track="' + track_id + '" code="' + i + '"></button> ';
     }
     elem += '</div><div class="col-1"><input id="track-' + track_id + '-volume" class="slider" type="range" min="0" max="128" value="128" /></div>';
-    elem += '<div class="col-1"><span id="track-' + track_id + '-mute" class="mute"><i class="fas fa-volume-up"></i></button></div>';
-    elem += '<div class="col-1"><button type="button" track="' + track_id + '" class="close" aria-label="Close"><span aria-hidden="true">&times;</span></button></div></div>';
+    elem += '<div class="col-1"><span id="track-' + track_id + '-mute" class="mute"><i class="fas fa-volume-up"></i></span>';
+    elem += '<button type="button" track="' + track_id + '" class="close" aria-label="Close"><span aria-hidden="true">&times;</span></button></div></div>';
 
     $("#track-area").append(elem);
 }
@@ -491,6 +492,7 @@ $(document).ready(function() {
                 }
                 handleDrumKeyPress(evt, track_id, btn_id, on);
             });
+
             $(document.body).on("mouseup", ".beat-btn", function(evt) {
                 let track_id = parseInt($(this).attr("track"));
                 handleDrumKeyRelease(evt, track_id);
@@ -519,6 +521,31 @@ $(document).ready(function() {
                 } else {
                     muteBtn.addClass("fa-volume-up");
                     muteBtn.removeClass("fa-volume-mute");
+                }
+            });
+
+            // On change of drumtype span
+            $('body').on('focus', '[contenteditable]', function() {
+                const $this = $(this);
+                $this.data('before', $this.html());
+            }).on('blur', '[contenteditable]', function(e) {
+                const $this = $(this);
+                // always allow change in track name
+                if (!e.target.id.startsWith('drumtype-')) return;
+                // change validity on the change in drumtype
+                let regex = /^[0-9]+$/
+                let c = $this.html();
+                if ($this.data('before') !== c) {
+                    if (regex.test(c) && parseInt(c) >= 35 && parseInt(c) <= 81) {
+                        let trackId = parseInt(e.target.id.replace('drumtype-', ''));
+                        let indx = getIndexFromTrackID(trackId);
+                        tracks[indx].drumtype = parseInt(c);
+                        console.log(tracks);
+                        $this.data('before', $this.html());
+                    }
+                    else {
+                        $this.html($this.data('before'));
+                    }
                 }
             });
 
